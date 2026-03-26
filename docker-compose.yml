@@ -1,0 +1,47 @@
+services:
+  wireguard:
+    image: linuxserver/wireguard:latest
+    container_name: wireguard
+    hostname: kraken
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Asia/Singapore
+    volumes:
+      - ./wireguard:/config
+      - /lib/modules:/lib/modules
+    sysctls:
+      - net.ipv4.conf.all.src_valid_mark=1
+    restart: always
+    healthcheck:
+      test: [ "CMD", "ip", "addr", "show", "wg0" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  chromium-sandbox:
+    image: tuapuikia/chromium-sandbox:latest
+    container_name: chromium-sandbox
+    pull_policy: always
+    cap_add:
+      - SYS_ADMIN # Required for Chrome's sandbox features
+    network_mode: service:wireguard
+    depends_on:
+      wireguard:
+        condition: service_healthy
+    environment:
+      - DISPLAY=${DISPLAY:-:0}
+      - PULSE_SERVER=unix:/run/user/1000/pulse/native
+      - TZ=Asia/Singapore
+    volumes:
+      - ./data:/home/chromium/.config/chromium
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - /run/user/1000/pulse:/run/user/1000/pulse:ro
+      - /etc/localtime:/etc/localtime:ro
+    shm_size: 2gb
+    restart: always
+    entrypoint: [ "sleep", "infinity" ]
