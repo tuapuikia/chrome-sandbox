@@ -42,6 +42,11 @@ services:
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
       - /run/user/1000/pulse:/run/user/1000/pulse:ro
       - /etc/localtime:/etc/localtime:ro
+    devices:
+      - /dev/dri:/dev/dri
+    group_add:
+      - video
+      - render
     shm_size: 2gb
     restart: always
     deploy:
@@ -51,4 +56,6 @@ services:
             - driver: nvidia
               count: all
               capabilities: [gpu]
+    device_cgroup_rules:
+      - 'c 226:* rmw' # Allow access to DRM devices
     entrypoint: [ "sleep", "infinity" ]

@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # Default arguments for Chromium
+# Note: Specific GPU flags are now passed from setup-x11.sh at runtime
 CHROME_FLAGS=(
   "--enable-gpu-rasterization"
   "--ignore-gpu-blocklist"
@@ -9,6 +10,5 @@ CHROME_FLAGS=(
 )
 
 # Run Chromium with the SUID sandbox (provided by chromium-sandbox package)
-# Note: We do NOT use --no-sandbox because we want the sandbox security.
-# This requires SYS_ADMIN capability in docker-compose.yml
+# Any extra arguments passed to this script will be appended to the flags
 exec chromium "${CHROME_FLAGS[@]}" "$@"
