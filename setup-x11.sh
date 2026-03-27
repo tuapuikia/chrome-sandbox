@@ -56,16 +56,20 @@ if [ "$GPU_TYPE" == "nvidia" ]; then
         --ignore-gpu-blocklist
 else
     # Default Intel/Mesa (Integrated)
-    # Use standard GL/EGL for Intel, ensuring NVIDIA is fully off
-    # We add more flags to force-enable hardware features
+    # --disable-gpu-sandbox is often required for Intel in Docker to prevent initialization crashes
+    # --use-gl=angle with --use-angle=gl-native or --use-gl=egl is more stable for Intel Mesa
     docker compose exec -it \
         -e __NV_PRIME_RENDER_OFFLOAD=0 \
         -e __GL_VENDOR_LIBRARY_NAME=mesa \
         -u chromium chromium-sandbox \
         /usr/local/bin/start.sh \
-        --use-gl=desktop \
+        --use-gl=angle \
+        --use-angle=gl \
         --enable-zero-copy \
         --enable-gpu-memory-buffer-video-frames \
         --enable-features=VaapiVideoDecoder,VaapiVideoEncoder,CanvasOopRasterization \
-        --ignore-gpu-blocklist
+        --ignore-gpu-blocklist \
+        --enable-gpu-rasterization \
+        --ozone-platform=x11 \
+        --enable-gpu
 fi

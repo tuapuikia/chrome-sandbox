@@ -22,6 +22,7 @@ RUN apt-get update && apt-get install -y \
     libvulkan1 \
     mesa-va-drivers \
     intel-media-va-driver \
+    mesa-vulkan-drivers \
     mesa-utils \
     libva-glx2 \
     libva-drm2 \
