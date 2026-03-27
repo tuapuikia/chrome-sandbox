@@ -2,8 +2,8 @@
 
 # Default arguments for Chromium
 CHROME_FLAGS=(
-  "--disable-gpu"
-  "--disable-software-rasterizer"
+  "--enable-gpu-rasterization"
+  "--ignore-gpu-blocklist"
   "--disable-dev-shm-usage"
   "--user-data-dir=/home/chromium/.config/chromium"
 )

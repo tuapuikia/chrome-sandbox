@@ -44,4 +44,11 @@ services:
       - /etc/localtime:/etc/localtime:ro
     shm_size: 2gb
     restart: always
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
     entrypoint: [ "sleep", "infinity" ]

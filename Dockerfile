@@ -16,6 +16,9 @@ RUN apt-get update && apt-get install -y \
     fonts-nanum \
     libgl1-mesa-dri \
     libglx-mesa0 \
+    libva-glx2 \
+    libva-drm2 \
+    libva-x11-2 \
     pulseaudio \
     libpulse0 \
     alsa-utils \
@@ -23,6 +26,10 @@ RUN apt-get update && apt-get install -y \
     libasound2 \
     xdg-utils \
     && rm -rf /var/lib/apt/lists/*
+
+# Environment variables for NVIDIA GPU support
+ENV NVIDIA_VISIBLE_DEVICES=all
+ENV NVIDIA_DRIVER_CAPABILITIES=graphics,utility,compute
 
 # Create a non-privileged user
 RUN useradd -m -s /bin/bash chromium
