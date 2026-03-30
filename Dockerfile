@@ -5,7 +5,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 # Install dependencies for Chromium, X11, and pulse audio
 # Using Debian 13 (Trixie) and installing chromium-sandbox
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get upgrade -y && apt-get install -y \
     chromium \
     chromium-sandbox \
     chromium-l10n \
