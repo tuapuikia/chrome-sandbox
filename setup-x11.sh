@@ -36,7 +36,7 @@ fi
 
 # Ensure containers are running in the background
 echo "Starting containers in the background..."
-docker compose up -d wireguard chromium-sandbox
+docker compose up -d wireguard-chromium chromium-sandbox
 
 # Function to handle Ctrl+C (it will just terminate the exec process)
 trap 'echo "Terminating chromium session..."; exit 0' SIGINT SIGTERM

@@ -1,7 +1,7 @@
 services:
-  wireguard:
+  wireguard-chromium:
     image: linuxserver/wireguard:latest
-    container_name: wireguard
+    container_name: wireguard-chromium
     hostname: kraken
     cap_add:
       - NET_ADMIN
@@ -29,9 +29,9 @@ services:
     pull_policy: always
     cap_add:
       - SYS_ADMIN # Required for Chrome's sandbox features
-    network_mode: service:wireguard
+    network_mode: service:wireguard-chromium
     depends_on:
-      wireguard:
+      wireguard-chromium:
         condition: service_healthy
     environment:
       - DISPLAY=${DISPLAY:-:0}
