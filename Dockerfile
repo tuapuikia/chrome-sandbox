@@ -3,6 +3,9 @@ FROM debian:trixie-slim
 # Avoid prompts from apt
 ENV DEBIAN_FRONTEND=noninteractive
 
+# Add this line to bust the cache whenever you want a fresh update
+ARG CACHEBUST=1
+
 # Install dependencies for Chromium, X11, and pulse audio
 # Using Debian 13 (Trixie) and installing chromium-sandbox
 RUN apt-get update && apt-get upgrade -y && apt-get install -y \
