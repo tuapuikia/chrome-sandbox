@@ -1,0 +1,70 @@
+FROM debian:trixie-slim
+
+# Avoid prompts from apt
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Add this line to bust the cache whenever you want a fresh update
+ARG CACHEBUST=1
+
+# Install prerequisites, graphics libraries, fonts, audio, and Thorium dependencies
+RUN apt-get update && apt-get upgrade -y && apt-get install -y \
+    ca-certificates \
+    curl \
+    wget \
+    fonts-noto-cjk \
+    fonts-noto-color-emoji \
+    fonts-ipafont-gothic \
+    fonts-wqy-zenhei \
+    fonts-nanum \
+    fonts-liberation \
+    libgl1-mesa-dri \
+    libglx-mesa0 \
+    libgbm1 \
+    libgles2 \
+    libegl1 \
+    libvulkan1 \
+    mesa-va-drivers \
+    intel-media-va-driver \
+    mesa-vulkan-drivers \
+    mesa-utils \
+    libva-glx2 \
+    libva-drm2 \
+    libva-x11-2 \
+    pulseaudio \
+    libpulse0 \
+    alsa-utils \
+    libasound2 \
+    xdg-utils \
+    && rm -rf /var/lib/apt/lists/*
+
+# Download and install Thorium Browser (compiled with full HEVC parser, proprietary codecs, and VA-API)
+RUN THORIUM_URL="https://github.com/Alex313031/thorium/releases/download/M138.0.7204.303/thorium-browser_138.0.7204.303_AVX2.deb" && \
+    wget -q --show-progress -O /tmp/thorium.deb "$THORIUM_URL" && \
+    apt-get update && \
+    apt-get install -y /tmp/thorium.deb && \
+    rm -f /tmp/thorium.deb && \
+    rm -rf /var/lib/apt/lists/*
+
+# Environment variables for NVIDIA GPU support
+ENV NVIDIA_VISIBLE_DEVICES=all
+ENV NVIDIA_DRIVER_CAPABILITIES=graphics,utility,compute,video
+
+# Create a non-privileged user and ensure it has access to GPU devices
+RUN groupadd -g 109 render || true && \
+    useradd -m -s /bin/bash -G video,render chromium || \
+    usermod -aG video,render chromium
+
+# Set up work directory
+WORKDIR /home/chromium
+
+# Copy start script
+COPY start.sh /usr/local/bin/start.sh
+RUN chmod +x /usr/local/bin/start.sh
+
+# Persistent directory for Thorium profile
+RUN mkdir -p /home/chromium/.config/thorium && \
+    chown -R chromium:chromium /home/chromium
+
+USER chromium
+
+ENTRYPOINT ["/usr/local/bin/start.sh"]
